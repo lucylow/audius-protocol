@@ -3,6 +3,7 @@ const { handleResponse, successResponse, errorResponseForbidden, errorResponseBa
 const models = require('../models')
 const { QueryTypes } = require('sequelize')
 const userHandleMiddleware = require('../userHandleMiddleware')
+const authMiddleware = require('../authMiddleware')
 
 module.exports = function (app) {
   app.get('/id_signals', userHandleMiddleware, handleResponse(async req => {
@@ -57,7 +58,10 @@ module.exports = function (app) {
       }
     })
 
-    const response = { captchaScores, cognitoFlowScores, socialSignals: {}, emailAddress: req.user.email }
+    const userIPRecord = await models.UserIPs.findOne({ where: { handle } })
+    const userIP = userIPRecord && userIPRecord.userIP
+
+    const response = { captchaScores, cognitoFlowScores, socialSignals: {}, userIP, emailAddress: req.user.email }
     if (socialHandles) {
       response.socialSignals = {
         ...socialHandles.dataValues,
@@ -66,5 +70,27 @@ module.exports = function (app) {
       }
     }
     return successResponse(response)
+  }))
+
+  app.get('/record_ip', authMiddleware, handleResponse(async req => {
+    const { blockchainUserId, handle } = req.user
+    const userIP = req.ip
+    req.logger.info(`req.ip is ${req.ip} (X-Forwarded-For: ${req.get('X-Forwarded-For')}) for user with id ${blockchainUserId} and handle ${handle}`)
+
+    const record = await models.UserIPs.findOne({ where: { handle } })
+    req.logger.info(`Record for user ${handle}: ${JSON.stringify(record)}`)
+    // if (!record) {
+    //   req.logger.info(`Saving IP ${userIP} for user ${handle}`)
+    //   await models.UserIPs.create({
+    //     handle,
+    //     userIP
+    //   })
+    // } else {
+    //   // update even if IP has not changed so that we can later use updatedAt value if necessary
+    //   req.logger.info(`Updating IP ${userIP} for user ${handle}`)
+    //   await record.update({ userIP })
+    // }
+
+    return successResponse({ userIP })
   }))
 }
