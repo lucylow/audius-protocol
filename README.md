@@ -1,6 +1,3 @@
-<img src="https://avatars1.githubusercontent.com/u/38231615?s=400&u=c00678880596dabd2746dae13a47edbe7ea7210e&v=4" width="150px" >
-
----
 
 # audius-protocol
 
