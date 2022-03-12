@@ -4,7 +4,6 @@
 
 # audius-protocol
 
-[![CircleCI](https://circleci.com/gh/AudiusProject/audius-protocol/tree/master.svg?style=svg&circle-token=e272a756b49e50a54dcc096af8fd8b0405f6bf41)](https://circleci.com/gh/AudiusProject/audius-protocol/tree/master)
 
 Audius is a decentralized, community-owned music-sharing protocol and app. It provides a
 censorship-resistant alternative to SoundCloud that helps artists distribute anything they
